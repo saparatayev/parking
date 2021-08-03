@@ -10,4 +10,10 @@ class Customer extends Model
     use HasFactory;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'fio',
+        'email',
+        'phone',
+    ];
 }

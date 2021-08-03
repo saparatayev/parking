@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +21,17 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
+Route::get('/customers', [CustomersController::class, 'index'])
+    ->middleware(['auth'])->name('customers');
+    
+Route::match(['get','post'], '/customers/create', [CustomersController::class, 'create'])
+    ->middleware(['auth'])->name('newCustomer');
+    
+Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class, 'edit'])
+    ->middleware(['auth'])->name('editCustomer');
+    
+Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
+    ->middleware(['auth'])->name('deleteCustomer');
 
 require __DIR__.'/auth.php';
