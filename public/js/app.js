@@ -1883,6 +1883,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     parkingPlaces: function parkingPlaces() {
@@ -1897,7 +1908,7 @@ __webpack_require__.r(__webpack_exports__);
       parkingPlace: {
         id: '',
         nom: '',
-        price: ''
+        price: 0
       },
       edit: false,
       pagination: {}
@@ -1924,86 +1935,70 @@ __webpack_require__.r(__webpack_exports__);
         prev_page_url: prv
       };
       this.pagination = pagination;
-    } // addOrUpdateArticle () {
-    //     if(!this.edit) {
-    //         this.$store.dispatch('addArticle_vuex',this.article)
-    //         .then((res) => {
-    //             this.article.title = ''
-    //             this.article.title_ru = ''
-    //             this.article.body = ''
-    //             this.article.img = ''
-    //             this.image = ''
-    //             if(res) {
-    //                 if(res.status === 401) {
-    //                     alert('Unauthorized logged in but expired token')
-    //                     this.$store.dispatch('logout')
-    //                     .then(() => {
-    //                         this.$router.push({name:'signin'})
-    //                     })
-    //                 }
-    //                 else {
-    //                     alert('Article Added')
-    //                     this.fetchArticles()
-    //                 }
-    //             }
-    //         })
-    //         .catch(err => alert(err))
-    //     } else {
-    //         this.$store.dispatch('updateArticle_vuex',this.article)
-    //         .then((res) => {
-    //             this.edit = false
-    //             this.article.title = ''
-    //             this.article.title_ru = ''
-    //             this.article.body = ''
-    //             this.article.img = ''
-    //             this.image = ''
-    //             if(res) {
-    //                 if(res.status === 401) {
-    //                     alert('Unauthorized')
-    //                     this.$store.dispatch('logout')
-    //                     .then(() => {
-    //                         this.$router.push({name:'signin'})
-    //                     })
-    //                 }
-    //                 else {
-    //                     alert('Article Updated')
-    //                     this.fetchArticles()
-    //                 }
-    //             }
-    //         })
-    //         .catch(err => alert(err))
-    //     }
-    // },
-    // editArticle(article) {
-    //     this.edit = true;
-    //     this.article.id = article.id;
-    //     this.article.article_id = article.id;
-    //     this.article.title = article.title;
-    //     this.article.title_ru = article.title_ru;
-    //     this.article.body = article.body;
-    //     this.article.img = article.img;
-    //     this.image = article.img;
-    // },
-    // deleteArticle (id) {
-    //     this.$store.dispatch('deleteArticle_vuex',id)
-    //     .then((res)=> {
-    //         if(res) {
-    //             if(res.status === 401) {
-    //                 alert('Unauthorized')
-    //                 this.$store.dispatch('logout')
-    //                 .then(() => {
-    //                     this.$router.push('signin')
-    //                 })
-    //             }
-    //             else {
-    //                 alert('Article deleted')
-    //                 this.fetchArticles()
-    //             }
-    //         }
-    //     })
-    //     .catch(err => alert(err))
-    // }
+    },
+    addOrUpdatePlace: function addOrUpdatePlace() {
+      var _this = this;
 
+      if (!this.edit) {
+        this.$store.dispatch('addParkingPlace', this.parkingPlace).then(function (res) {
+          _this.parkingPlace.id = '';
+          _this.parkingPlace.nom = '';
+          _this.parkingPlace.price = 0;
+
+          if (res.status === 201) {
+            alert('Парковочное место добавлено');
+
+            _this.fetchParkingPlaces();
+          } else {
+            alert('Ошибка ' + res.status);
+          }
+        })["catch"](function (err) {
+          return alert(err);
+        });
+      } else {
+        this.$store.dispatch('updateParkingPlace', this.parkingPlace).then(function (res) {
+          _this.edit = false;
+          _this.parkingPlace.id = '';
+          _this.parkingPlace.nom = '';
+          _this.parkingPlace.price = 0;
+
+          if (res) {
+            if (res.status === 200) {
+              alert('Article Updated');
+
+              _this.fetchParkingPlaces();
+            } else {
+              alert('Ошибка ' + res.status);
+            }
+          }
+        })["catch"](function (err) {
+          return alert(err);
+        });
+      }
+    },
+    editParkingPlace: function editParkingPlace(place) {
+      this.edit = true;
+      this.parkingPlace.id = place.id;
+      this.parkingPlace.nom = place.nom;
+      this.parkingPlace.price = place.price;
+    },
+    deletParkingPlace: function deletParkingPlace(id) {
+      var _this2 = this;
+
+      this.$store.dispatch('deleteParkingPlace', id).then(function (res) {
+        if (res) {
+          if (res.status === 204) {
+            alert('Удалено');
+
+            _this2.fetchParkingPlaces();
+          } else {
+            alert('Ошибка ' + res.status);
+          }
+        }
+      })["catch"](function (err) {
+        return alert(err);
+      });
+    }
   }
 });
 
@@ -2107,17 +2102,20 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     addParkingPlace: function addParkingPlace(_ref2, newParkingPlace) {
-      var commit = _ref2.commit,
-          state = _ref2.state;
+      var commit = _ref2.commit;
       commit('loadingvuex', true);
       return new Promise(function (resolve, reject) {
         var formData = new FormData();
         formData.append('id', newParkingPlace.id);
         formData.append('nom', newParkingPlace.nom);
         formData.append('price', newParkingPlace.price);
-        fetch('https://parking/parking-places/create', {
+        console.log(newParkingPlace);
+        fetch('/parking-places/create', {
           method: 'post',
-          body: formData
+          body: formData,
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
         }).then(function (res) {
           commit('loadingvuex', false);
           resolve(res);
@@ -2127,18 +2125,19 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     updateParkingPlace: function updateParkingPlace(_ref3, newParkingPlace) {
-      var commit = _ref3.commit,
-          state = _ref3.state;
+      var commit = _ref3.commit;
       commit('loadingvuex', true);
       return new Promise(function (resolve, reject) {
         var formData = new FormData();
         formData.append('id', newParkingPlace.id);
         formData.append('nom', newParkingPlace.nom);
-        formData.append('price', newParkingPlace.price); // formData.append('_method', 'PUT');
-
-        fetch("https://parking/parking-places/".concat(newParkingPlace.id), {
+        formData.append('price', newParkingPlace.price);
+        fetch("/parking-places/".concat(newParkingPlace.id), {
           method: 'post',
-          body: formData
+          body: formData,
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
         }).then(function (res) {
           commit('loadingvuex', false);
           resolve(res);
@@ -2148,14 +2147,16 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     deleteParkingPlace: function deleteParkingPlace(_ref4, id) {
-      var commit = _ref4.commit,
-          state = _ref4.state;
+      var commit = _ref4.commit;
       commit('loadingvuex', true);
 
       if (confirm('Вы уверены?')) {
         return new Promise(function (resolve, reject) {
-          fetch("https://parking/parking-places/".concat(id), {
-            method: 'delete'
+          fetch("/parking-places/".concat(id), {
+            method: 'delete',
+            headers: {
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
           }).then(function (res) {
             commit('loadingvuex', false);
             resolve(res);
@@ -20195,6 +20196,81 @@ var render = function() {
       _vm.loadingContent
         ? _c("spinner")
         : _c("div", { staticClass: "container" }, [
+            _c(
+              "form",
+              {
+                staticClass: "mb-3",
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.addOrUpdatePlace.apply(null, arguments)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "form-group mb-2" }, [
+                  _c("label", [_vm._v("Номер парковочного места")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.parkingPlace.nom,
+                        expression: "parkingPlace.nom"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { required: "", type: "text" },
+                    domProps: { value: _vm.parkingPlace.nom },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.parkingPlace, "nom", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group mb-2" }, [
+                  _c("label", [_vm._v("Цена")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.parkingPlace.price,
+                        expression: "parkingPlace.price"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { required: "", type: "number", step: "0.01" },
+                    domProps: { value: _vm.parkingPlace.price },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.parkingPlace, "price", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary btn-block",
+                    attrs: { type: "submit" }
+                  },
+                  [_vm._v(_vm._s(_vm.edit ? "Изменить" : "Добавить"))]
+                )
+              ]
+            ),
+            _vm._v(" "),
             _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
               _c("ul", { staticClass: "pagination" }, [
                 _c(
@@ -20282,13 +20358,34 @@ var render = function() {
                     _c("td", [_vm._v(_vm._s(place.price) + " ₽")]),
                     _vm._v(" "),
                     _c("td", [
-                      _c("a", { attrs: { href: "#" } }, [_vm._v("Изменить")])
+                      _c(
+                        "a",
+                        {
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.editParkingPlace(place)
+                            }
+                          }
+                        },
+                        [_vm._v("Изменить")]
+                      )
                     ]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
                         "a",
-                        { staticClass: "text-danger", attrs: { href: "#" } },
+                        {
+                          staticClass: "text-danger",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.deletParkingPlace(place.id)
+                            }
+                          }
+                        },
                         [_vm._v("Удалить")]
                       )
                     ])

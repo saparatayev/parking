@@ -41,4 +41,13 @@ Route::get('/parking-places', [ParkingplacesController::class, 'index'])
 Route::get('/parking-places/get-parking-places', [ParkingplacesController::class, 'getParkingPlaces'])
     ->middleware(['auth'])->name('parkingPlaces');
 
+Route::post('/parking-places/create', [ParkingplacesController::class, 'create'])
+    ->middleware(['auth'])->name('parkingPlacesNew');
+
+Route::post('/parking-places/{id}', [ParkingplacesController::class, 'update'])
+    ->middleware(['auth'])->name('parkingPlacesNew');
+
+Route::delete('/parking-places/{id}', [ParkingplacesController::class, 'delete'])
+    ->middleware(['auth'])->name('parkingPlacesDelete');
+
 require __DIR__.'/auth.php';

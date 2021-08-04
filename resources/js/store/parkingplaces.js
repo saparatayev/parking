@@ -29,20 +29,26 @@ export default {
                 .catch(err => reject(err))
             })
         },
-        addParkingPlace ({commit,state}, newParkingPlace) {
+        addParkingPlace ({commit}, newParkingPlace) {
+            
             commit('loadingvuex', true)
 
             return new Promise((resolve,reject) => {
                 const formData = new FormData();
+
                 formData.append('id', newParkingPlace.id);
                 formData.append('nom', newParkingPlace.nom);
                 formData.append('price', newParkingPlace.price);
 
-                fetch('https://parking/parking-places/create',{
-                    method: 'post',
-                    body: formData
-                })
+                console.log(newParkingPlace)
 
+                fetch('/parking-places/create',{
+                    method: 'post',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
                 .then((res) => {
                     commit('loadingvuex', false)
 
@@ -53,7 +59,7 @@ export default {
                 })
             })
         },
-        updateParkingPlace ({commit,state},newParkingPlace) {
+        updateParkingPlace ({commit},newParkingPlace) {
             commit('loadingvuex', true)
 
             return new Promise((resolve,reject) => {
@@ -61,11 +67,13 @@ export default {
                 formData.append('id', newParkingPlace.id);
                 formData.append('nom', newParkingPlace.nom);
                 formData.append('price', newParkingPlace.price);
-                // formData.append('_method', 'PUT');
 
-                fetch(`https://parking/parking-places/${newParkingPlace.id}`,{
+                fetch(`/parking-places/${newParkingPlace.id}`,{
                     method: 'post',
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
                 })
                 .then((res) => {
                     commit('loadingvuex', false)
@@ -75,13 +83,16 @@ export default {
                 .catch(err => reject(err))
             })
         },
-        deleteParkingPlace ({commit,state},id) {
+        deleteParkingPlace ({commit},id) {
             commit('loadingvuex', true)
                 
             if(confirm('Вы уверены?')) {
                 return new Promise((resolve,reject) => {
-                    fetch(`https://parking/parking-places/${id}`,{
-                        method:'delete'
+                    fetch(`/parking-places/${id}`,{
+                        method:'delete',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
                     })
                     .then((res) => {
                         commit('loadingvuex', false)

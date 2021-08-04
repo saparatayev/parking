@@ -2,6 +2,17 @@
 <div>
     <spinner v-if="loadingContent"></spinner>
     <div v-else class="container">
+        <form @submit.prevent="addOrUpdatePlace" class="mb-3">
+            <div class="form-group mb-2">
+                <label>Номер парковочного места</label>
+                <input required type="text" class="form-control" v-model="parkingPlace.nom">
+            </div>
+            <div class="form-group mb-2">
+                <label>Цена</label>
+                <input required type="number" step="0.01" class="form-control" v-model="parkingPlace.price">
+            </div>
+            <button class="btn btn-secondary btn-block" type="submit">{{ edit ? 'Изменить' : 'Добавить' }}</button>
+        </form>
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li :class="[{disabled: !pagination.prev_page_url}]" class="page-item">
@@ -26,8 +37,8 @@
                 <tr v-for="place in parkingPlaces" :key="place.id">
                     <td>{{place.nom}}</td>
                     <td>{{place.price}} &#8381;</td>
-                    <td><a href="#">Изменить</a></td>
-                    <td><a href="#" class="text-danger">Удалить</a></td>
+                    <td><a @click.prevent="editParkingPlace(place)" href="#">Изменить</a></td>
+                    <td><a @click.prevent="deletParkingPlace(place.id)" href="#" class="text-danger">Удалить</a></td>
                 </tr>
             </tbody>
         </table>
@@ -51,7 +62,7 @@ export default {
             parkingPlace: {
                 id: '',
                 nom: '',
-                price: '',
+                price: 0,
             },
             edit: false,
             pagination: {}
@@ -84,87 +95,63 @@ export default {
 
             this.pagination = pagination;
         },
-        // addOrUpdateArticle () {
-        //     if(!this.edit) {
-        //         this.$store.dispatch('addArticle_vuex',this.article)
-        //         .then((res) => {
-        //             this.article.title = ''
-        //             this.article.title_ru = ''
-        //             this.article.body = ''
-        //             this.article.img = ''
-        //             this.image = ''
+        addOrUpdatePlace () {
+            if(!this.edit) {
+                this.$store.dispatch('addParkingPlace', this.parkingPlace)
+                .then((res) => {
+                    this.parkingPlace.id = ''
+                    this.parkingPlace.nom = ''
+                    this.parkingPlace.price = 0
 
-        //             if(res) {
-        //                 if(res.status === 401) {
-        //                     alert('Unauthorized logged in but expired token')
-        //                     this.$store.dispatch('logout')
-        //                     .then(() => {
-        //                         this.$router.push({name:'signin'})
-        //                     })
-        //                 }
-        //                 else {
-        //                     alert('Article Added')
-        //                     this.fetchArticles()
-        //                 }
-        //             }
-        //         })
-        //         .catch(err => alert(err))
-        //     } else {
-        //         this.$store.dispatch('updateArticle_vuex',this.article)
-        //         .then((res) => {
-        //             this.edit = false
-        //             this.article.title = ''
-        //             this.article.title_ru = ''
-        //             this.article.body = ''
-        //             this.article.img = ''
-        //             this.image = ''
+                    if(res.status === 201) {
+                        alert('Парковочное место добавлено')
+                        this.fetchParkingPlaces()
+                    } else {
+                        alert('Ошибка ' + res.status)
+                    }
+                })
+                .catch(err => alert(err))
+            } else {
+                this.$store.dispatch('updateParkingPlace', this.parkingPlace)
+                .then((res) => {
+                    this.edit = false
+                    this.parkingPlace.id = ''
+                    this.parkingPlace.nom = ''
+                    this.parkingPlace.price = 0
 
-        //             if(res) {
-        //                 if(res.status === 401) {
-        //                     alert('Unauthorized')
-        //                     this.$store.dispatch('logout')
-        //                     .then(() => {
-        //                         this.$router.push({name:'signin'})
-        //                     })
-        //                 }
-        //                 else {
-        //                     alert('Article Updated')
-        //                     this.fetchArticles()
-        //                 }
-        //             }
-        //         })
-        //         .catch(err => alert(err))
-        //     }
-        // },
-        // editArticle(article) {
-        //     this.edit = true;
-        //     this.article.id = article.id;
-        //     this.article.article_id = article.id;
-        //     this.article.title = article.title;
-        //     this.article.title_ru = article.title_ru;
-        //     this.article.body = article.body;
-        //     this.article.img = article.img;
-        //     this.image = article.img;
-        // },
-        // deleteArticle (id) {
-        //     this.$store.dispatch('deleteArticle_vuex',id)
-        //     .then((res)=> {
-        //         if(res) {
-        //             if(res.status === 401) {
-        //                 alert('Unauthorized')
-        //                 this.$store.dispatch('logout')
-        //                 .then(() => {
-        //                     this.$router.push('signin')
-        //                 })
-        //             }
-        //             else {
-        //                 alert('Article deleted')
-        //                 this.fetchArticles()
-        //             }
-        //         }
-        //     })
-        //     .catch(err => alert(err))
-        // }
+                    if(res) {
+                        if(res.status === 200) {
+                            alert('Article Updated')
+                            this.fetchParkingPlaces()
+                        } else {
+                            alert('Ошибка ' + res.status)
+                        }
+                    }
+                })
+                .catch(err => alert(err))
+            }
+        },
+        editParkingPlace(place) {
+            this.edit = true;
+            this.parkingPlace.id = place.id;
+            this.parkingPlace.nom = place.nom;
+            this.parkingPlace.price = place.price;
+        },
+        deletParkingPlace(id) {
+            this.$store.dispatch('deleteParkingPlace', id)
+            .then((res)=> {
+                if(res) {
+                    if(res.status === 204) {
+                        alert('Удалено')
+                        this.fetchParkingPlaces()
+                    }
+                    else {
+                        alert('Ошибка ' + res.status)
+                    }
+                }
+            })
+            .catch(err => alert(err))
+        }
     }
 }
 </script>
