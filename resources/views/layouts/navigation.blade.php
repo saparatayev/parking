@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('customers')" :active="request()->routeIs('customers')">
                         Клиенты
                     </x-nav-link>
+                    <x-nav-link :href="route('parkingPlaces')" :active="request()->routeIs('parkingPlaces')">
+                        Парковочные места
+                    </x-nav-link>
                 </div>
             </div>
 

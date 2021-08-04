@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\ParkingplacesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,5 +34,11 @@ Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class
     
 Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
     ->middleware(['auth'])->name('deleteCustomer');
+    
+Route::get('/parking-places', [ParkingplacesController::class, 'index'])
+    ->middleware(['auth'])->name('parkingPlaces');
+
+Route::get('/parking-places/get-parking-places', [ParkingplacesController::class, 'getParkingPlaces'])
+    ->middleware(['auth'])->name('parkingPlaces');
 
 require __DIR__.'/auth.php';
