@@ -29,6 +29,7 @@
                 <tr>
                     <th scope="col">No.</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Booked</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -37,6 +38,7 @@
                 <tr v-for="place in parkingPlaces" :key="place.id">
                     <td>{{place.nom}}</td>
                     <td>{{place.price}} &#8381;</td>
+                    <td><span class="badge bg-danger">{{place.booked ? 'booked' : ''}}</span></td>
                     <td><a @click.prevent="editParkingPlace(place)" href="#">Изменить</a></td>
                     <td><a @click.prevent="deletParkingPlace(place.id)" href="#" class="text-danger">Удалить</a></td>
                 </tr>

@@ -2026,6 +2026,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     parkingPlaces: function parkingPlaces() {
@@ -20827,6 +20829,8 @@ var render = function() {
                   _vm._v(" "),
                   _c("th", { attrs: { scope: "col" } }, [_vm._v("Price")]),
                   _vm._v(" "),
+                  _c("th", { attrs: { scope: "col" } }, [_vm._v("Booked")]),
+                  _vm._v(" "),
                   _c("th", { attrs: { scope: "col" } }),
                   _vm._v(" "),
                   _c("th", { attrs: { scope: "col" } })
@@ -20840,6 +20844,12 @@ var render = function() {
                     _c("td", [_vm._v(_vm._s(place.nom))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(place.price) + " ₽")]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c("span", { staticClass: "badge bg-danger" }, [
+                        _vm._v(_vm._s(place.booked ? "booked" : ""))
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
