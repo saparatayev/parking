@@ -1902,6 +1902,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     bookings: function bookings() {
@@ -1909,6 +1913,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     loadingContent: function loadingContent() {
       return this.$store.getters.bookingsLoadingValue;
+    }
+  },
+  props: {
+    customerId: {
+      type: Number,
+      "default": 0
     }
   },
   data: function data() {
@@ -1925,7 +1935,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     fetchBookings: function fetchBookings(page_url) {
       var vm = this;
-      page_url = page_url || '/bookings/get-bookings';
+      page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId;
       this.$store.dispatch('fetchBookings', page_url).then(function (res) {
         vm.makePagination(res.current_page, res.last_page, res.next_page_url, res.prev_page_url);
       })["catch"](function (err) {
@@ -20537,9 +20547,11 @@ var render = function() {
                           _vm._v("Bъезд / Bыезд")
                         ]),
                         _vm._v(" "),
-                        _c("th", { attrs: { scope: "col" } }, [
-                          _vm._v("Kлиент")
-                        ]),
+                        !_vm.customerId
+                          ? _c("th", { attrs: { scope: "col" } }, [
+                              _vm._v("Kлиент")
+                            ])
+                          : _vm._e(),
                         _vm._v(" "),
                         _c("th", { attrs: { scope: "col" } }, [_vm._v("Цена")])
                       ])
@@ -20563,21 +20575,29 @@ var render = function() {
                             ])
                           ]),
                           _vm._v(" "),
-                          _c("td", [
-                            _c(
-                              "a",
-                              {
-                                attrs: { href: "#" },
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    return _vm.getCustomer(b.customer)
-                                  }
-                                }
-                              },
-                              [_vm._v(_vm._s(b.customer.fio))]
-                            )
-                          ]),
+                          !_vm.customerId
+                            ? _c("td", [
+                                _c(
+                                  "a",
+                                  {
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        return _vm.getCustomer(b.customer)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\r\n                                " +
+                                        _vm._s(b.customer.fio) +
+                                        "\r\n                            "
+                                    )
+                                  ]
+                                )
+                              ])
+                            : _vm._e(),
                           _vm._v(" "),
                           _c("td", [_vm._v(_vm._s(b.price) + " ₽")])
                         ])

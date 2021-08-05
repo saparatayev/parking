@@ -20,7 +20,7 @@
                         <th scope="col">Mарка авто</th>
                         <th scope="col">Hомер парковочного места</th>
                         <th scope="col">Bъезд / Bыезд</th>
-                        <th scope="col">Kлиент</th>
+                        <th v-if="!customerId" scope="col">Kлиент</th>
                         <th scope="col">Цена</th>
 
                     </tr>
@@ -30,7 +30,11 @@
                         <td>{{b.car_model}}</td>
                         <td>{{b.parking_place.nom}}</td>
                         <td><span class="text-success">{{b.date_in}}</span> / <span class="text-danger">{{b.date_out}}</span></td>
-                        <td><a @click.prevent="getCustomer(b.customer)" href="#">{{b.customer.fio}}</a></td>
+                        <td v-if="!customerId">
+                            <a @click.prevent="getCustomer(b.customer)" href="#">
+                                {{ b.customer.fio }}
+                            </a>
+                        </td>
                         <td>{{b.price}} &#8381;</td>
                     </tr>
                 </tbody>
@@ -42,7 +46,7 @@
                     Клиент
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{customer.fio}}</h5>
+                    <h5 class="card-title">{{ customer.fio }}</h5>
                     <p class="card-text">{{customer.phone}}</p>
                     <p class="card-text">{{customer.email}}</p>
                     <a @click.prevent="backToBookings" href="#" class="btn btn-primary">Назад</a>
@@ -65,6 +69,12 @@ export default {
             return this.$store.getters.bookingsLoadingValue
         }
     },
+    props: {
+        customerId: {
+            type: Number,
+            default: 0
+        }
+    },
     data () {
         return {
             pagination: {},
@@ -80,7 +90,7 @@ export default {
         fetchBookings (page_url) {
             let vm = this;
             
-            page_url = page_url || '/bookings/get-bookings'
+            page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId
 
             this.$store.dispatch('fetchBookings', page_url)
             .then(res => {

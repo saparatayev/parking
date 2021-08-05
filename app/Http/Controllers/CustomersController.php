@@ -10,7 +10,7 @@ class CustomersController extends Controller
     public function index() {
         
         return view('customers')->with([
-            'customers' => Customer::paginate(4)
+            'customers' => Customer::with('bookings')->paginate(4)
         ]);
     }
 

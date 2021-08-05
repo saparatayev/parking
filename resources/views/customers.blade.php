@@ -23,6 +23,7 @@
                                 <th scope="col">FIO</th>
                                 <th scope="col">Тел.</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Брони</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -33,6 +34,11 @@
                                     <td>{{ $customer->fio }}</td>
                                     <td>{{ $customer->phone }}</td>
                                     <td>{{ $customer->email }}</td>
+                                    <td>
+                                        @if(count($customer->bookings) > 0)
+                                            <a href="{{ route('bookings') }}?customer_id={{ $customer->id }}">Смотреть</a>
+                                        @endif
+                                    </td>
                                     <td><a href="{{ route('editCustomer', ['id' => $customer->id]) }}">Изменить</a></td>
                                     <td>
                                         <form action="{{ route('deleteCustomer',['id' => $customer->id]) }}" method="post">
