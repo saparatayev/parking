@@ -19,19 +19,54 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+            
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{{route('bookPage')}}">Главная</a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{{route('dashboard')}}">Панель</a>
+                            </li>
+                            @auth
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('customers')}}">Клиенты</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('parkingPlaces')}}">Парковочные места</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('bookings')}}">Забронированные места</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ Auth::user()->name }}
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <form method="POST" class="dropdown-item" action="{{ route('logout') }}">
+                                            @csrf
 
-            <!-- Page Heading -->
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
+                                            <a href="route('logout')"
+                                                    onclick="event.preventDefault();
+                                                                this.closest('form').submit();">
+                                                {{ __('Log Out') }}
+                                            </a>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                            @endauth
+                        </ul>
+                    </div>
                 </div>
-            </header>
-
+            </nav>
             <!-- Page Content -->
-            <main id="app">
-                {{ $slot }}
+            <main id="app" class="mt-5">
+                @yield('content')
             </main>
         </div>
     </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 </html>

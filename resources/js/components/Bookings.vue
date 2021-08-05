@@ -2,6 +2,7 @@
 <div>
     <spinner v-if="loadingContent"></spinner>
     <div v-else class="container">
+        <h2>Забронированные места</h2>
         <div v-if="showBookings">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">

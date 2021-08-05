@@ -2,6 +2,7 @@
 <div>
     <spinner v-if="loadingContent"></spinner>
     <div v-else class="container">
+        <h2>Парковочные места</h2>
         <form @submit.prevent="addOrUpdatePlace" class="mb-3">
             <div class="form-group mb-2">
                 <label>Номер парковочного места</label>
