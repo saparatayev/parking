@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\ParkingplacesController;
+use App\Http\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,9 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+
+// customers
+
 Route::get('/customers', [CustomersController::class, 'index'])
     ->middleware(['auth'])->name('customers');
     
@@ -34,12 +38,15 @@ Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class
     
 Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
     ->middleware(['auth'])->name('deleteCustomer');
+
+
+    // parking places
     
 Route::get('/parking-places', [ParkingplacesController::class, 'index'])
     ->middleware(['auth'])->name('parkingPlaces');
 
 Route::get('/parking-places/get-parking-places', [ParkingplacesController::class, 'getParkingPlaces'])
-    ->middleware(['auth'])->name('parkingPlaces');
+    ->middleware(['auth'])->name('getParkingPlaces');
 
 Route::post('/parking-places/create', [ParkingplacesController::class, 'create'])
     ->middleware(['auth'])->name('parkingPlacesNew');
@@ -49,5 +56,14 @@ Route::post('/parking-places/{id}', [ParkingplacesController::class, 'update'])
 
 Route::delete('/parking-places/{id}', [ParkingplacesController::class, 'delete'])
     ->middleware(['auth'])->name('parkingPlacesDelete');
+
+    
+    //bookings 
+
+Route::get('/bookings', [BookingController::class, 'index'])
+    ->middleware(['auth'])->name('bookings');
+    
+Route::get('/bookings/get-bookings', [BookingController::class, 'getBookings'])
+    ->middleware(['auth'])->name('getBookings');
 
 require __DIR__.'/auth.php';

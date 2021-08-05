@@ -15,4 +15,8 @@ class ParkingPlace extends Model
         'price',
         'nom'
     ];
+
+    public function bookings() {
+        return $this->hasMany(Booking::class);
+    }
 }

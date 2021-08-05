@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('parkingPlaces')" :active="request()->routeIs('parkingPlaces')">
                         Парковочные места
                     </x-nav-link>
+                    <x-nav-link :href="route('bookings')" :active="request()->routeIs('bookings')">
+                        Забронированные места
+                    </x-nav-link>
                 </div>
             </div>
 
