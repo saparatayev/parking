@@ -1907,6 +1907,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     bookings: function bookings() {
@@ -1927,7 +1957,13 @@ __webpack_require__.r(__webpack_exports__);
       pagination: {},
       showBookings: true,
       showCustomer: false,
-      customer: {}
+      showStatus: false,
+      customer: {},
+      status: {
+        id: 0,
+        actual_date_in: '',
+        actual_date_out: ''
+      }
     };
   },
   created: function created() {
@@ -1952,15 +1988,55 @@ __webpack_require__.r(__webpack_exports__);
       };
       this.pagination = pagination;
     },
+    changeStatus: function changeStatus() {
+      var _this = this;
+
+      this.$store.dispatch('changeStatus', this.status).then(function (res) {
+        if (res) {
+          if (res.status === 200) {
+            alert('Status changed');
+
+            _this.fetchBookings();
+
+            _this.backToBookings();
+          } else {
+            alert('Ошибка ' + res.status);
+          }
+        }
+      })["catch"](function (err) {
+        return alert(err);
+      });
+    },
+    getStatus: function getStatus(booking) {
+      this.customer = {};
+      this.status = {
+        id: booking.id,
+        actual_date_in: booking.actual_date_in,
+        actual_date_out: booking.actual_date_out
+      };
+      this.showBookings = false;
+      this.showCustomer = false;
+      this.showStatus = true;
+    },
     getCustomer: function getCustomer(customer) {
       this.customer = customer;
-      this.showBookings = false;
+      this.status = {
+        id: 0,
+        actual_date_in: '',
+        actual_date_out: ''
+      }, this.showBookings = false;
       this.showCustomer = true;
+      this.showStatus = false;
     },
     backToBookings: function backToBookings() {
       this.customer = {};
-      this.showBookings = true;
+      this.status = {
+        id: 0,
+        actual_date_in: '',
+        actual_date_out: ''
+      }, this.showBookings = true;
       this.showCustomer = false;
+      this.showStatus = false;
     }
   }
 });
@@ -2100,7 +2176,7 @@ __webpack_require__.r(__webpack_exports__);
 
           if (res) {
             if (res.status === 200) {
-              alert('Article Updated');
+              alert('Parking place Updated');
 
               _this.fetchParkingPlaces();
             } else {
@@ -2231,6 +2307,28 @@ __webpack_require__.r(__webpack_exports__);
           return res.json();
         }).then(function (res) {
           commit('setBookings', res);
+          commit('loadingvuex', false);
+          resolve(res);
+        })["catch"](function (err) {
+          return reject(err);
+        });
+      });
+    },
+    changeStatus: function changeStatus(_ref2, status) {
+      var commit = _ref2.commit;
+      commit('loadingvuex', true);
+      return new Promise(function (resolve, reject) {
+        var formData = new FormData();
+        formData.append('id', status.id);
+        formData.append('actual_date_in', status.actual_date_in);
+        formData.append('actual_date_out', status.actual_date_out);
+        fetch("/bookings/change-status/".concat(status.id), {
+          method: 'post',
+          body: formData,
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        }).then(function (res) {
           commit('loadingvuex', false);
           resolve(res);
         })["catch"](function (err) {
@@ -20546,11 +20644,15 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("th", { attrs: { scope: "col" } }, [
-                          _vm._v("Hомер парковочного места")
+                          _vm._v("Парк. место")
                         ]),
                         _vm._v(" "),
                         _c("th", { attrs: { scope: "col" } }, [
-                          _vm._v("Bъезд / Bыезд")
+                          _vm._v("Bъезд / Bыезд (бронь)")
+                        ]),
+                        _vm._v(" "),
+                        _c("th", { attrs: { scope: "col" } }, [
+                          _vm._v("Bъехал / Bыехал (статус)")
                         ]),
                         _vm._v(" "),
                         !_vm.customerId
@@ -20559,7 +20661,15 @@ var render = function() {
                             ])
                           : _vm._e(),
                         _vm._v(" "),
-                        _c("th", { attrs: { scope: "col" } }, [_vm._v("Цена")])
+                        _c("th", { attrs: { scope: "col" } }, [
+                          _vm._v("Цена/д.")
+                        ]),
+                        _vm._v(" "),
+                        _c("th", { attrs: { scope: "col" } }, [
+                          _vm._v("Всего")
+                        ]),
+                        _vm._v(" "),
+                        _c("th")
                       ])
                     ]),
                     _vm._v(" "),
@@ -20578,6 +20688,16 @@ var render = function() {
                             _vm._v(" / "),
                             _c("span", { staticClass: "text-danger" }, [
                               _vm._v(_vm._s(b.date_out))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _c("span", { staticClass: "text-success" }, [
+                              _vm._v(_vm._s(b.actual_date_in))
+                            ]),
+                            _vm._v(" / "),
+                            _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(b.actual_date_out))
                             ])
                           ]),
                           _vm._v(" "),
@@ -20605,7 +20725,25 @@ var render = function() {
                               ])
                             : _vm._e(),
                           _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(b.price) + " ₽")])
+                          _c("td", [_vm._v(_vm._s(b.price) + " ₽")]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(b.amount) + " ₽")]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _c(
+                              "a",
+                              {
+                                attrs: { href: "#" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.getStatus(b)
+                                  }
+                                }
+                              },
+                              [_vm._v("Статус")]
+                            )
+                          ])
                         ])
                       }),
                       0
@@ -20647,6 +20785,157 @@ var render = function() {
                           }
                         },
                         [_vm._v("Назад")]
+                      )
+                    ])
+                  ])
+                ])
+              : _vm.showStatus
+              ? _c("div", [
+                  _c("div", { staticClass: "card" }, [
+                    _c("div", { staticClass: "card-header" }, [
+                      _vm._v(
+                        "\r\n                    Статус\r\n                "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "card-body" }, [
+                      _c(
+                        "form",
+                        {
+                          on: {
+                            submit: function($event) {
+                              $event.preventDefault()
+                              return _vm.changeStatus.apply(null, arguments)
+                            }
+                          }
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.status.id,
+                                expression: "status.id"
+                              }
+                            ],
+                            attrs: { type: "hidden", name: "id" },
+                            domProps: { value: _vm.status.id },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(_vm.status, "id", $event.target.value)
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "mb-3 form-check" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.status.actual_date_in,
+                                  expression: "status.actual_date_in"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "date",
+                                name: "actual_date_in",
+                                id: "actual_date_in"
+                              },
+                              domProps: { value: _vm.status.actual_date_in },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.status,
+                                    "actual_date_in",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "form-check-label",
+                                attrs: { for: "actual_date_in" }
+                              },
+                              [_vm._v("Въехал")]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "mb-3 form-check" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.status.actual_date_out,
+                                  expression: "status.actual_date_out"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "date",
+                                name: "actual_date_out",
+                                id: "actual_date_out"
+                              },
+                              domProps: { value: _vm.status.actual_date_out },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.status,
+                                    "actual_date_out",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "form-check-label",
+                                attrs: { for: "actual_date_out" }
+                              },
+                              [_vm._v("Выехал")]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("input", {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "submit", value: "Сохранить" }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-secondary",
+                              attrs: { href: "#" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.backToBookings.apply(
+                                    null,
+                                    arguments
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Назад")]
+                          )
+                        ]
                       )
                     ])
                   ])

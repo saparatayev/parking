@@ -17,7 +17,8 @@ class Booking extends Model
         'date_in',
         'date_out',
         'customer_id',
-        'price'
+        'price',
+        'amount'
     ];
 
     public function customer()

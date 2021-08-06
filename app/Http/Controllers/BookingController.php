@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\ParkingPlace;
 use App\Models\Customer;
+use \Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -81,6 +82,11 @@ class BookingController extends Controller
             $input['customer_id'] = $customerId;
             $input['price'] = $parkingPlace->price;
 
+            // how much does it cost to book a parking place
+            // for days between date_in and date_out
+            $input['amount'] = Carbon::createFromDate($result['date_in'])
+                ->diffInDays(Carbon::createFromDate($result['date_out'])) * $parkingPlace->price;
+
             $booking = new Booking();
             $booking->fill($input);
             if($booking->save()) {
@@ -98,8 +104,19 @@ class BookingController extends Controller
         ]);
     }
 
-    protected function validateFields($rules, $data) {
+    public function changeStatus($id, Request $request) {
+        $booking = Booking::find($id);
+        if($request->get('actual_date_in') != '') {
+            $booking->actual_date_in = $request->get('actual_date_in');
+        }
+        if($request->get('actual_date_out') != '') {
+            $booking->actual_date_out = $request->get('actual_date_out');
+        }
         
+        if($booking->save()) {
+            return response()->json($booking, 200);
+        }
+        return response()->json(["message"=>"Internal Server Error"], 500);
     }
     
 }

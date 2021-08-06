@@ -124,7 +124,7 @@ export default {
 
                     if(res) {
                         if(res.status === 200) {
-                            alert('Article Updated')
+                            alert('Parking place Updated')
                             this.fetchParkingPlaces()
                         } else {
                             alert('Ошибка ' + res.status)

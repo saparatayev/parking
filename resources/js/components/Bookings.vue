@@ -19,11 +19,13 @@
                 <thead>
                     <tr>
                         <th scope="col">Mарка авто</th>
-                        <th scope="col">Hомер парковочного места</th>
-                        <th scope="col">Bъезд / Bыезд</th>
+                        <th scope="col">Парк. место</th>
+                        <th scope="col">Bъезд / Bыезд (бронь)</th>
+                        <th scope="col">Bъехал / Bыехал (статус)</th>
                         <th v-if="!customerId" scope="col">Kлиент</th>
-                        <th scope="col">Цена</th>
-
+                        <th scope="col">Цена/д.</th>
+                        <th scope="col">Всего</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,12 +33,15 @@
                         <td>{{b.car_model}}</td>
                         <td>{{b.parking_place.nom}}</td>
                         <td><span class="text-success">{{b.date_in}}</span> / <span class="text-danger">{{b.date_out}}</span></td>
+                        <td><span class="text-success">{{b.actual_date_in}}</span> / <span class="text-danger">{{b.actual_date_out}}</span></td>
                         <td v-if="!customerId">
                             <a @click.prevent="getCustomer(b.customer)" href="#">
                                 {{ b.customer.fio }}
                             </a>
                         </td>
                         <td>{{b.price}} &#8381;</td>
+                        <td>{{b.amount}} &#8381;</td>
+                        <td><a @click.prevent="getStatus(b)" href="#">Статус</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -51,6 +56,31 @@
                     <p class="card-text">{{customer.phone}}</p>
                     <p class="card-text">{{customer.email}}</p>
                     <a @click.prevent="backToBookings" href="#" class="btn btn-primary">Назад</a>
+                </div>
+            </div>
+        </div>
+        <div v-else-if="showStatus">
+            <div class="card">
+                <div class="card-header">
+                    Статус
+                </div>
+                <div class="card-body">
+                    <form @submit.prevent="changeStatus">
+                        <input type="hidden" name="id" v-model="status.id">
+                        <div class="mb-3 form-check">
+                            <input type="date" v-model="status.actual_date_in" class="form-control" name="actual_date_in" id="actual_date_in">
+                            <label class="form-check-label" for="actual_date_in">Въехал</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="date" v-model="status.actual_date_out" class="form-control" name="actual_date_out" id="actual_date_out">
+                            <label class="form-check-label" for="actual_date_out">Выехал</label>
+                        </div>
+                        
+                        <input type="submit" class="btn btn-primary" value="Сохранить">
+                    
+                        <a @click.prevent="backToBookings" href="#" class="btn btn-secondary">Назад</a>
+                            
+                    </form>
                 </div>
             </div>
         </div>
@@ -81,7 +111,13 @@ export default {
             pagination: {},
             showBookings: true,
             showCustomer: false,
-            customer: {}
+            showStatus: false,
+            customer: {},
+            status: {
+                id: 0,
+                actual_date_in: '',
+                actual_date_out: ''
+            }
         }
     },
     created () {
@@ -111,15 +147,53 @@ export default {
 
             this.pagination = pagination;
         },
+        changeStatus() {
+            this.$store.dispatch('changeStatus', this.status)
+            .then(res => {
+                if(res) {
+                    if(res.status === 200) {
+                        alert('Status changed')
+                        this.fetchBookings()
+                        this.backToBookings()
+                    } else {
+                        alert('Ошибка ' + res.status)
+                    }
+                }
+            })
+            .catch(err => alert(err))
+        },
+        getStatus(booking) {
+            this.customer = {}
+            this.status = {
+                id: booking.id,
+                actual_date_in: booking.actual_date_in,
+                actual_date_out: booking.actual_date_out
+            }
+            this.showBookings = false
+            this.showCustomer = false
+            this.showStatus = true
+        },
         getCustomer(customer) {
             this.customer = customer
+            this.status = {
+                id: 0,
+                actual_date_in: '',
+                actual_date_out: ''
+            },
             this.showBookings = false
             this.showCustomer = true
+            this.showStatus = false
         },
         backToBookings() {
             this.customer = {}
+            this.status = {
+                id: 0,
+                actual_date_in: '',
+                actual_date_out: ''
+            },
             this.showBookings = true
             this.showCustomer = false
+            this.showStatus = false
         }
     }
 }

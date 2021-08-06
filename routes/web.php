@@ -70,5 +70,8 @@ Route::get('/bookings', [BookingController::class, 'index'])
     
 Route::get('/bookings/get-bookings', [BookingController::class, 'getBookings'])
     ->middleware(['auth'])->name('getBookings');
+    
+Route::post('/bookings/change-status/{id}', [BookingController::class, 'changeStatus'])
+    ->middleware(['auth'])->name('changeStatus');
 
 require __DIR__.'/auth.php';

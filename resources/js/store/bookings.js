@@ -29,6 +29,30 @@ export default {
                 .catch(err => reject(err))
             })
         },
+        changeStatus({commit}, status) {
+            commit('loadingvuex', true)
+
+            return new Promise((resolve,reject) => {
+                const formData = new FormData();
+                formData.append('id', status.id);
+                formData.append('actual_date_in', status.actual_date_in);
+                formData.append('actual_date_out', status.actual_date_out);
+
+                fetch(`/bookings/change-status/${status.id}`,{
+                    method: 'post',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
+                .then((res) => {
+                    commit('loadingvuex', false)
+
+                    resolve(res)
+                })
+                .catch(err => reject(err))
+            })
+        }
     },
     getters: {
         getBookings: state => state.bookings,
