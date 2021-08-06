@@ -141,8 +141,8 @@ export default {
             let pagination = {
                 current_page: cur_pg,
                 last_page: lst_pg,
-                next_page_url: nxt,
-                prev_page_url: prv
+                next_page_url: !this.customerId ? nxt : nxt + '&customer_id=' + this.customerId,
+                prev_page_url: !this.customerId ? prv : prv + '&customer_id=' + this.customerId
             }
 
             this.pagination = pagination;
