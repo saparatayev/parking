@@ -40,3 +40,36 @@
         })
         .catch(err => alert(err))
     }
+
+    function findCustomer() {
+        if(email.value != '') {
+            fetch('/customers/find/' + email.value, {
+                method:'get',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.customer) {
+                    fio.value = res.customer.fio
+                    fio.disabled = true
+                    
+                    phone.value = res.customer.phone
+                    phone.disabled = true
+
+                    customer_id.value = res.customer.id
+                } else {
+                    fio.value = ''
+                    fio.disabled = false
+                    phone.value = ''
+                    phone.disabled = false
+                    
+                    customer_id.value = ''
+                }
+                
+            })
+            .catch(err => console.log(err))
+        }
+        
+    }

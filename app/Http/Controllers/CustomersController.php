@@ -89,4 +89,10 @@ class CustomersController extends Controller
             return redirect()->route('customers')->with('status','Данные о клиенте удалены');
         }
     }
+
+    public function findByEmail($email) {
+        $customer = Customer::where('email', $email)->first();
+
+        return response()->json([ 'customer' => $customer]);
+    }
 }

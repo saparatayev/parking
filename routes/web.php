@@ -39,6 +39,9 @@ Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class
 Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
     ->middleware(['auth'])->name('deleteCustomer');
 
+Route::get('/customers/find/{email}', [CustomersController::class, 'findByEmail'])
+    ->middleware(['auth'])->name('findByEmail');
+
 
     // parking places
     
