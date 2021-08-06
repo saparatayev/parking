@@ -19,4 +19,9 @@ class ParkingPlace extends Model
     public function bookings() {
         return $this->hasMany(Booking::class);
     }
+
+    public function scopeEmpty($query)
+    {
+        return $query->where('booked', 0);
+    }
 }
