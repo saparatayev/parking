@@ -24,3 +24,19 @@
 
 
 @endsection
+
+    function loadMore() {
+        let skipValue = my_select.getAttribute('data-skip')
+
+        fetch('/parking-places/get-more?skip=' + skipValue)
+        .then(res => res.json())
+        .then((res) => {
+            res.result.forEach(function(item){
+                more.insertAdjacentHTML('beforebegin',
+                 `<option value="${item.id}">${item.nom}</option>`)
+            })
+
+            my_select.setAttribute('data-skip', +skipValue + 5)
+        })
+        .catch(err => alert(err))
+    }

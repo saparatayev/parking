@@ -56,6 +56,9 @@ Route::post('/parking-places/{id}', [ParkingplacesController::class, 'update'])
 
 Route::delete('/parking-places/{id}', [ParkingplacesController::class, 'delete'])
     ->middleware(['auth'])->name('parkingPlacesDelete');
+    
+Route::get('/parking-places/get-more', [ParkingplacesController::class, 'getMore'])
+    ->name('getMoreParkingPlaces');
 
     
     //bookings 

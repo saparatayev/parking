@@ -75,4 +75,10 @@ class ParkingplacesController extends Controller
         }
         return response()->json(["message"=>"Internal Server Error"],500);
     }
+
+    public function getMore(Request $request) {
+        return response()->json( ['result' => ParkingPlace::empty()
+            ->skip($request->get('skip'))
+            ->limit(5)->get()]);
+    }
 }
