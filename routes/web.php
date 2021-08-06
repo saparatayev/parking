@@ -16,9 +16,8 @@ use App\Http\Controllers\BookingController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::match(['get','post'], '/', [BookingController::class, 'bookPage'])
+    ->middleware(['auth'])->name('bookPage');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

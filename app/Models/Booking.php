@@ -9,6 +9,17 @@ class Booking extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'car_model',
+        'parking_place_id',
+        'date_in',
+        'date_out',
+        'customer_id',
+        'price'
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);

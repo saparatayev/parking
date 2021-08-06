@@ -1906,6 +1906,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     bookings: function bookings() {
@@ -1977,6 +1978,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
 //
 //
 //
@@ -20459,6 +20461,8 @@ var render = function() {
       _vm.loadingContent
         ? _c("spinner")
         : _c("div", { staticClass: "container" }, [
+            _c("h2", [_vm._v("Забронированные места")]),
+            _vm._v(" "),
             _vm.showBookings
               ? _c("div", [
                   _c(
@@ -20682,6 +20686,8 @@ var render = function() {
       _vm.loadingContent
         ? _c("spinner")
         : _c("div", { staticClass: "container" }, [
+            _c("h2", [_vm._v("Парковочные места")]),
+            _vm._v(" "),
             _c(
               "form",
               {
