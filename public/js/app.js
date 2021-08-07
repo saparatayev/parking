@@ -2159,6 +2159,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     parkingPlaces: function parkingPlaces() {
@@ -2176,7 +2186,8 @@ __webpack_require__.r(__webpack_exports__);
         price: 0
       },
       edit: false,
-      pagination: {}
+      pagination: {},
+      errorsArr: []
     };
   },
   created: function created() {
@@ -2206,34 +2217,48 @@ __webpack_require__.r(__webpack_exports__);
 
       if (!this.edit) {
         this.$store.dispatch('addParkingPlace', this.parkingPlace).then(function (res) {
-          _this.parkingPlace.id = '';
-          _this.parkingPlace.nom = '';
-          _this.parkingPlace.price = 0;
-
           if (res.status === 201) {
+            _this.parkingPlace.id = '';
+            _this.parkingPlace.nom = '';
+            _this.parkingPlace.price = 0;
             alert('Парковочное место добавлено');
 
             _this.fetchParkingPlaces();
-          } else {
-            alert('Ошибка ' + res.status);
+          }
+
+          return res.json();
+        }).then(function (res) {
+          _this.errorsArr = [];
+          var errorValidation = res.errorValidation;
+
+          for (var key in errorValidation) {
+            for (var i = 0; i < errorValidation[key].length; i++) {
+              _this.errorsArr.push(errorValidation[key][i]);
+            }
           }
         })["catch"](function (err) {
           return alert(err);
         });
       } else {
         this.$store.dispatch('updateParkingPlace', this.parkingPlace).then(function (res) {
-          _this.edit = false;
-          _this.parkingPlace.id = '';
-          _this.parkingPlace.nom = '';
-          _this.parkingPlace.price = 0;
+          if (res.status === 200) {
+            _this.edit = false;
+            _this.parkingPlace.id = '';
+            _this.parkingPlace.nom = '';
+            _this.parkingPlace.price = 0;
+            alert('Parking place Updated');
 
-          if (res) {
-            if (res.status === 200) {
-              alert('Parking place Updated');
+            _this.fetchParkingPlaces();
+          }
 
-              _this.fetchParkingPlaces();
-            } else {
-              alert('Ошибка ' + res.status);
+          return res.json();
+        }).then(function (res) {
+          _this.errorsArr = [];
+          var errorValidation = res.errorValidation;
+
+          for (var key in errorValidation) {
+            for (var i = 0; i < errorValidation[key].length; i++) {
+              _this.errorsArr.push(errorValidation[key][i]);
             }
           }
         })["catch"](function (err) {
@@ -21204,6 +21229,30 @@ var render = function() {
                 }
               },
               [
+                _vm.errorsArr.length > 0
+                  ? _c(
+                      "div",
+                      _vm._l(_vm.errorsArr, function(error) {
+                        return _c(
+                          "div",
+                          {
+                            key: error,
+                            staticClass: "alert alert-danger",
+                            attrs: { role: "alert" }
+                          },
+                          [
+                            _vm._v(
+                              "\r\n                    " +
+                                _vm._s(error) +
+                                "\r\n                "
+                            )
+                          ]
+                        )
+                      }),
+                      0
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
                 _c("div", { staticClass: "form-group mb-2" }, [
                   _c("label", [_vm._v("Номер парковочного места")]),
                   _vm._v(" "),

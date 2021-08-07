@@ -23,7 +23,7 @@ class ParkingplacesController extends Controller
 
         $validator = \Validator::make($request->all(),$rules);
         if($validator->fails()) {
-            return response()->json($validator->errors(),400);
+            return response()->json(['errorValidation' => $validator->errors()],422);
         }
 
         $place = new ParkingPlace;
@@ -48,7 +48,7 @@ class ParkingplacesController extends Controller
 
         $validator = \Validator::make($result, $rules);
         if($validator->fails()) {
-            return response()->json($validator->errors(),400);
+            return response()->json(['errorValidation' => $validator->errors()],422);
         }
 
         $place = ParkingPlace::findOrFail($id);

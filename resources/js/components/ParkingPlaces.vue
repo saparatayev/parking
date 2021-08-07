@@ -4,6 +4,16 @@
     <div v-else class="container">
         <h2>Парковочные места</h2>
         <form @submit.prevent="addOrUpdatePlace" class="mb-3">
+            <div v-if="errorsArr.length > 0">
+                <div 
+                    v-for="error in errorsArr" 
+                    class="alert alert-danger" 
+                    role="alert"
+                    :key="error"
+                >
+                    {{error}}
+                </div>
+            </div>
             <div class="form-group mb-2">
                 <label>Номер парковочного места</label>
                 <input required type="text" class="form-control" v-model="parkingPlace.nom">
@@ -68,7 +78,8 @@ export default {
                 price: 0,
             },
             edit: false,
-            pagination: {}
+            pagination: {},
+            errorsArr: []
         }
     },
     created () {
@@ -102,32 +113,50 @@ export default {
             if(!this.edit) {
                 this.$store.dispatch('addParkingPlace', this.parkingPlace)
                 .then((res) => {
-                    this.parkingPlace.id = ''
-                    this.parkingPlace.nom = ''
-                    this.parkingPlace.price = 0
 
                     if(res.status === 201) {
+                        this.parkingPlace.id = ''
+                        this.parkingPlace.nom = ''
+                        this.parkingPlace.price = 0
+
                         alert('Парковочное место добавлено')
                         this.fetchParkingPlaces()
-                    } else {
-                        alert('Ошибка ' + res.status)
+                    }
+
+                    return res.json()
+                })
+                .then(res => {
+                    this.errorsArr = []
+                    let errorValidation = res.errorValidation
+                    for (let key in errorValidation) {
+                        for(let i=0;i<errorValidation[key].length;i++) {
+                            this.errorsArr.push(errorValidation[key][i])
+                        }
                     }
                 })
                 .catch(err => alert(err))
             } else {
                 this.$store.dispatch('updateParkingPlace', this.parkingPlace)
                 .then((res) => {
-                    this.edit = false
-                    this.parkingPlace.id = ''
-                    this.parkingPlace.nom = ''
-                    this.parkingPlace.price = 0
+                    
+                    if(res.status === 200) {
+                        this.edit = false
+                        this.parkingPlace.id = ''
+                        this.parkingPlace.nom = ''
+                        this.parkingPlace.price = 0
 
-                    if(res) {
-                        if(res.status === 200) {
-                            alert('Parking place Updated')
-                            this.fetchParkingPlaces()
-                        } else {
-                            alert('Ошибка ' + res.status)
+                        alert('Parking place Updated')
+                        this.fetchParkingPlaces()
+                    }
+
+                    return res.json()
+                })
+                .then(res => {
+                    this.errorsArr = []
+                    let errorValidation = res.errorValidation
+                    for (let key in errorValidation) {
+                        for(let i=0;i<errorValidation[key].length;i++) {
+                            this.errorsArr.push(errorValidation[key][i])
                         }
                     }
                 })
