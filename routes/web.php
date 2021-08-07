@@ -16,62 +16,66 @@ use App\Http\Controllers\BookingController;
 |
 */
 
-Route::match(['get','post'], '/', [BookingController::class, 'bookPage'])
-    ->middleware(['auth'])->name('bookPage');
+Route::middleware(['auth'])->group(function() {
+    Route::match(['get','post'], '/', [BookingController::class, 'bookPage'])
+    ->name('bookPage');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-
-// customers
-
-Route::get('/customers', [CustomersController::class, 'index'])
-    ->middleware(['auth'])->name('customers');
-    
-Route::match(['get','post'], '/customers/create', [CustomersController::class, 'create'])
-    ->middleware(['auth'])->name('newCustomer');
-    
-Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class, 'edit'])
-    ->middleware(['auth'])->name('editCustomer');
-    
-Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
-    ->middleware(['auth'])->name('deleteCustomer');
-
-Route::get('/customers/find/{email}', [CustomersController::class, 'findByEmail'])
-    ->middleware(['auth'])->name('findByEmail');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
 
-    // parking places
-    
-Route::get('/parking-places', [ParkingplacesController::class, 'index'])
-    ->middleware(['auth'])->name('parkingPlaces');
+    // customers
 
-Route::get('/parking-places/get-parking-places', [ParkingplacesController::class, 'getParkingPlaces'])
-    ->middleware(['auth'])->name('getParkingPlaces');
+    Route::get('/customers', [CustomersController::class, 'index'])
+        ->name('customers');
+        
+    Route::match(['get','post'], '/customers/create', [CustomersController::class, 'create'])
+        ->name('newCustomer');
+        
+    Route::match(['get','post'], '/customers/edit/{id}', [CustomersController::class, 'edit'])
+        ->name('editCustomer');
+        
+    Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])
+        ->name('deleteCustomer');
 
-Route::post('/parking-places/create', [ParkingplacesController::class, 'create'])
-    ->middleware(['auth'])->name('parkingPlacesNew');
+    Route::get('/customers/find/{email}', [CustomersController::class, 'findByEmail'])
+        ->name('findByEmail');
 
-Route::post('/parking-places/{id}', [ParkingplacesController::class, 'update'])
-    ->middleware(['auth'])->name('parkingPlacesNew');
 
-Route::delete('/parking-places/{id}', [ParkingplacesController::class, 'delete'])
-    ->middleware(['auth'])->name('parkingPlacesDelete');
-    
-Route::get('/parking-places/get-more', [ParkingplacesController::class, 'getMore'])
-    ->name('getMoreParkingPlaces');
+        // parking places
+        
+    Route::get('/parking-places', [ParkingplacesController::class, 'index'])
+        ->name('parkingPlaces');
 
-    
-    //bookings 
+    Route::get('/parking-places/get-parking-places', [ParkingplacesController::class, 'getParkingPlaces'])
+        ->name('getParkingPlaces');
 
-Route::get('/bookings', [BookingController::class, 'index'])
-    ->middleware(['auth'])->name('bookings');
-    
-Route::get('/bookings/get-bookings', [BookingController::class, 'getBookings'])
-    ->middleware(['auth'])->name('getBookings');
-    
-Route::post('/bookings/change-status/{id}', [BookingController::class, 'changeStatus'])
-    ->middleware(['auth'])->name('changeStatus');
+    Route::post('/parking-places/create', [ParkingplacesController::class, 'create'])
+        ->name('parkingPlacesNew');
+
+    Route::post('/parking-places/{id}', [ParkingplacesController::class, 'update'])
+        ->name('parkingPlacesNew');
+
+    Route::delete('/parking-places/{id}', [ParkingplacesController::class, 'delete'])
+        ->name('parkingPlacesDelete');
+        
+    Route::get('/parking-places/get-more', [ParkingplacesController::class, 'getMore'])
+        ->name('getMoreParkingPlaces');
+
+        
+        //bookings 
+
+    Route::get('/bookings', [BookingController::class, 'index'])
+        ->name('bookings');
+        
+    Route::get('/bookings/get-bookings', [BookingController::class, 'getBookings'])
+        ->name('getBookings');
+        
+    Route::post('/bookings/change-status/{id}', [BookingController::class, 'changeStatus'])
+        ->name('changeStatus');
+});
+
+
 
 require __DIR__.'/auth.php';
