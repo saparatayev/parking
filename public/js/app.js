@@ -1937,6 +1937,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     bookings: function bookings() {
@@ -1963,6 +1994,10 @@ __webpack_require__.r(__webpack_exports__);
         id: 0,
         actual_date_in: '',
         actual_date_out: ''
+      },
+      filterData: {
+        sort_date: '',
+        sort_status: ''
       }
     };
   },
@@ -1972,7 +2007,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     fetchBookings: function fetchBookings(page_url) {
       var vm = this;
-      page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId;
+      page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId + '&sort_date=' + this.filterData.sort_date + '&sort_status=' + this.filterData.sort_status;
       this.$store.dispatch('fetchBookings', page_url).then(function (res) {
         vm.makePagination(res.current_page, res.last_page, res.next_page_url, res.prev_page_url);
       })["catch"](function (err) {
@@ -1983,9 +2018,20 @@ __webpack_require__.r(__webpack_exports__);
       var pagination = {
         current_page: cur_pg,
         last_page: lst_pg,
-        next_page_url: nxt,
-        prev_page_url: prv
+        next_page_url: !this.customerId ? nxt : nxt + '&customer_id=' + this.customerId,
+        prev_page_url: !this.customerId ? prv : prv + '&customer_id=' + this.customerId
       };
+
+      if (this.filterData.sort_date != '' && this.filterData.sort_status != '') {
+        if (pagination.next_page_url) {
+          pagination.next_page_url = "".concat(pagination.next_page_url, "&sort_date=").concat(this.filterData.sort_date, "&sort_status=").concat(this.filterData.sort_status);
+        }
+
+        if (pagination.prev_page_url) {
+          pagination.prev_page_url = "".concat(pagination.prev_page_url, "&sort_date=").concat(this.filterData.sort_date, "&sort_status=").concat(this.filterData.sort_status);
+        }
+      }
+
       this.pagination = pagination;
     },
     changeStatus: function changeStatus() {
@@ -2037,6 +2083,13 @@ __webpack_require__.r(__webpack_exports__);
       }, this.showBookings = true;
       this.showCustomer = false;
       this.showStatus = false;
+    },
+    withoutFilters: function withoutFilters() {
+      this.filterData = {
+        sort_date: '',
+        sort_status: ''
+      };
+      this.fetchBookings();
     }
   }
 });
@@ -20563,6 +20616,168 @@ var render = function() {
             _vm._v(" "),
             _vm.showBookings
               ? _c("div", [
+                  !_vm.customerId
+                    ? _c(
+                        "form",
+                        {
+                          staticClass: "mb-2",
+                          on: {
+                            submit: function($event) {
+                              $event.preventDefault()
+                              return _vm.fetchBookings()
+                            }
+                          }
+                        },
+                        [
+                          _c("div", { staticClass: "row" }, [
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", [_vm._v("Дата")]),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.filterData.sort_date,
+                                    expression: "filterData.sort_date"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "date",
+                                  namd: "sort_date",
+                                  required: ""
+                                },
+                                domProps: { value: _vm.filterData.sort_date },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.filterData,
+                                      "sort_date",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label", [_vm._v("Статус")]),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.filterData.sort_status,
+                                      expression: "filterData.sort_status"
+                                    }
+                                  ],
+                                  staticClass: "form-select",
+                                  attrs: { name: "sort_status", required: "" },
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.$set(
+                                        _vm.filterData,
+                                        "sort_status",
+                                        $event.target.multiple
+                                          ? $$selectedVal
+                                          : $$selectedVal[0]
+                                      )
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { value: "in" } }, [
+                                    _vm._v("Въехал")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", { attrs: { value: "out" } }, [
+                                    _vm._v("Выехал")
+                                  ])
+                                ]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label"),
+                              _vm._v(" "),
+                              _c("input", {
+                                staticClass: "btn btn-secondary form-control",
+                                attrs: { type: "submit", value: "Показать" }
+                              })
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col" }, [
+                              _c("label"),
+                              _vm._v(" "),
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "btn btn-secondary form-control",
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.withoutFilters()
+                                    }
+                                  }
+                                },
+                                [_vm._v("Показать все")]
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "row col" }, [
+                            _c("span", [
+                              _vm._v("Будут показаны брони с датой -- "),
+                              _c(
+                                "span",
+                                { staticClass: "text-light bg-secondary" },
+                                [_vm._v(_vm._s(_vm.filterData.sort_date))]
+                              ),
+                              _vm._v(
+                                "\r\n                        -- фактического -- \r\n                        "
+                              ),
+                              _c(
+                                "span",
+                                { staticClass: "text-light bg-secondary" },
+                                [
+                                  _vm._v(
+                                    "\r\n                            " +
+                                      _vm._s(
+                                        _vm.filterData.sort_status == "out"
+                                          ? "выезда"
+                                          : _vm.filterData.sort_status == "in"
+                                          ? "въезда"
+                                          : ""
+                                      ) +
+                                      " \r\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v("--\r\n                    ")
+                            ])
+                          ])
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c(
                     "nav",
                     { attrs: { "aria-label": "Page navigation example" } },

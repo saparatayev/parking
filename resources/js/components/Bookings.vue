@@ -4,6 +4,37 @@
     <div v-else class="container">
         <h2>Забронированные места</h2>
         <div v-if="showBookings">
+            <form v-if="!customerId" class="mb-2" @submit.prevent="fetchBookings()">
+                <div class="row">
+                    <div class="col">
+                        <label>Дата</label>
+                        <input v-model="filterData.sort_date" type="date" namd="sort_date" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label>Статус</label>
+                        <select v-model="filterData.sort_status" name="sort_status" class="form-select" required>
+                            <option value="in">Въехал</option>
+                            <option value="out">Выехал</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label> </label>
+                        <input type="submit" class="btn btn-secondary form-control" value="Показать">
+                    </div>
+                    <div class="col">
+                        <label> </label>
+                        <a href="#" @click="withoutFilters()" class="btn btn-secondary form-control">Показать все</a>
+                    </div>
+                </div>
+                <div class="row col">
+                    <span>Будут показаны брони с датой -- <span class="text-light bg-secondary">{{ filterData.sort_date }}</span>
+                        -- фактического -- 
+                        <span class="text-light bg-secondary">
+                            {{ filterData.sort_status == 'out' ? 'выезда' : filterData.sort_status == 'in' ? 'въезда' : '' }} 
+                        </span>--
+                    </span>
+                </div>
+            </form>
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     <li :class="[{disabled: !pagination.prev_page_url}]" class="page-item">
@@ -117,6 +148,10 @@ export default {
                 id: 0,
                 actual_date_in: '',
                 actual_date_out: ''
+            },
+            filterData: {
+                sort_date: '',
+                sort_status: ''
             }
         }
     },
@@ -127,7 +162,7 @@ export default {
         fetchBookings (page_url) {
             let vm = this;
             
-            page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId
+            page_url = page_url || '/bookings/get-bookings?customer_id=' + this.customerId + '&sort_date=' + this.filterData.sort_date + '&sort_status=' + this.filterData.sort_status
 
             this.$store.dispatch('fetchBookings', page_url)
             .then(res => {
@@ -143,6 +178,17 @@ export default {
                 last_page: lst_pg,
                 next_page_url: !this.customerId ? nxt : nxt + '&customer_id=' + this.customerId,
                 prev_page_url: !this.customerId ? prv : prv + '&customer_id=' + this.customerId
+            }
+
+            if(this.filterData.sort_date != '' && this.filterData.sort_status != '') {
+                if(pagination.next_page_url) {
+                    pagination.next_page_url = `${pagination.next_page_url}&sort_date=${this.filterData.sort_date}&sort_status=${this.filterData.sort_status}`
+                }
+                if(pagination.prev_page_url) {
+                    pagination.prev_page_url = `${pagination.prev_page_url}&sort_date=${this.filterData.sort_date}&sort_status=${this.filterData.sort_status}`
+                }
+                
+                
             }
 
             this.pagination = pagination;
@@ -194,6 +240,13 @@ export default {
             this.showBookings = true
             this.showCustomer = false
             this.showStatus = false
+        },
+        withoutFilters() {
+            this.filterData = {
+                sort_date: '',
+                sort_status: ''
+            }
+            this.fetchBookings()
         }
     }
 }

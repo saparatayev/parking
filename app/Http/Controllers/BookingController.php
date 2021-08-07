@@ -20,6 +20,15 @@ class BookingController extends Controller
     }
 
     public function getBookings(Request $request) {
+        if($request->get('sort_date') && $request->get('sort_status')) {
+            $date = $request->get('sort_date');
+            $actual_date = 'actual_date_' . $request->get('sort_status');
+
+            return response()->json(Booking::with(['customer','parkingPlace'])
+                ->where($actual_date, $date)
+                ->orderBy('id','desc')
+                ->paginate(5), 200);
+        }
         if($request->get('customer_id')) {
             $customerId = $request->get('customer_id');
            
