@@ -10,6 +10,12 @@
                 </div>
             @endif
 
+            @if(session('can_not_delete'))
+                <div class="alert alert-danger mt-3">
+                    {{ session('can_not_delete') }}
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2>Клиенты <a href="{{ route('newCustomer') }}" class="ml-5 btn btn-secondary">Добавить</a></h2>

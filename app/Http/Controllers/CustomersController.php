@@ -83,7 +83,11 @@ class CustomersController extends Controller
 
     public function delete($id, Request $request) {
         if($request->isMethod('delete')) {
-            $old = Customer::findOrFail($id);
+            $old = Customer::with('bookings')->findOrFail($id);
+
+            if(count($old->bookings) > 0) {
+                return redirect()->route('customers')->with('can_not_delete','У этого клиента есть бронь');
+            }
 
             $old->delete();
             return redirect()->route('customers')->with('status','Данные о клиенте удалены');
