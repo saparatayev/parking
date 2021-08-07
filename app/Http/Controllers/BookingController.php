@@ -115,10 +115,10 @@ class BookingController extends Controller
 
     public function changeStatus($id, Request $request) {
         $booking = Booking::find($id);
-        if($request->get('actual_date_in') != '') {
+        if($request->get('actual_date_in') != 'null') {
             $booking->actual_date_in = $request->get('actual_date_in');
         }
-        if($request->get('actual_date_out') != '') {
+        if($request->get('actual_date_out') != 'null') {
             $booking->actual_date_out = $request->get('actual_date_out');
         }
         
