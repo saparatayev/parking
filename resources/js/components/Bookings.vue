@@ -40,7 +40,9 @@
                     <li :class="[{disabled: !pagination.prev_page_url}]" class="page-item">
                         <a @click="fetchBookings(pagination.prev_page_url)" class="page-link" href="#">&lt;</a>
                     </li>
-                    <li class="page-item disabled"><a class="page-link" href="#">Страница {{pagination.current_page}} of {{pagination.last_page}}</a></li>
+                    <li v-for="(link, index) in pagination.links" :key="index" class="page-item" :class="[{disabled: pagination.current_page == index + 1}]">
+                        <a @click="fetchBookings(link)" href="#" class="page-link">{{ index + 1 }}</a>
+                    </li>
                     <li :class="[{disabled: !pagination.next_page_url}]" class="page-item">
                         <a @click="fetchBookings(pagination.next_page_url)" class="page-link" href="#">&gt;</a>
                     </li>
@@ -176,8 +178,15 @@ export default {
             let pagination = {
                 current_page: cur_pg,
                 last_page: lst_pg,
-                next_page_url: !this.customerId ? nxt : nxt + '&customer_id=' + this.customerId,
-                prev_page_url: !this.customerId ? prv : prv + '&customer_id=' + this.customerId
+                next_page_url: this.customerId && nxt ? nxt + '&customer_id=' + this.customerId : nxt,
+                prev_page_url: this.customerId && prv ? prv + '&customer_id=' + this.customerId : prv,
+                links: []
+            }
+
+            for(let i = 1; i <= lst_pg; i++) {
+                let url = 'https://parking/bookings/get-bookings?page=' + i;
+                url = !this.customerId ? url : url + '&customer_id=' + this.customerId
+                pagination.links.push(url)
             }
 
             if(this.filterData.sort_date != '' && this.filterData.sort_status != '') {
@@ -188,7 +197,15 @@ export default {
                     pagination.prev_page_url = `${pagination.prev_page_url}&sort_date=${this.filterData.sort_date}&sort_status=${this.filterData.sort_status}`
                 }
                 
-                
+                let vm = this;
+
+                let newArr = [];
+
+                pagination.links.forEach(function(item) {
+                    newArr.push(`${item}&sort_date=${vm.filterData.sort_date}&sort_status=${vm.filterData.sort_status}`)
+                })
+
+                pagination.links = newArr;
             }
 
             this.pagination = pagination;

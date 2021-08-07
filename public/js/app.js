@@ -1968,6 +1968,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: {
     bookings: function bookings() {
@@ -2018,9 +2020,16 @@ __webpack_require__.r(__webpack_exports__);
       var pagination = {
         current_page: cur_pg,
         last_page: lst_pg,
-        next_page_url: !this.customerId ? nxt : nxt + '&customer_id=' + this.customerId,
-        prev_page_url: !this.customerId ? prv : prv + '&customer_id=' + this.customerId
+        next_page_url: this.customerId && nxt ? nxt + '&customer_id=' + this.customerId : nxt,
+        prev_page_url: this.customerId && prv ? prv + '&customer_id=' + this.customerId : prv,
+        links: []
       };
+
+      for (var i = 1; i <= lst_pg; i++) {
+        var url = 'https://parking/bookings/get-bookings?page=' + i;
+        url = !this.customerId ? url : url + '&customer_id=' + this.customerId;
+        pagination.links.push(url);
+      }
 
       if (this.filterData.sort_date != '' && this.filterData.sort_status != '') {
         if (pagination.next_page_url) {
@@ -2030,6 +2039,13 @@ __webpack_require__.r(__webpack_exports__);
         if (pagination.prev_page_url) {
           pagination.prev_page_url = "".concat(pagination.prev_page_url, "&sort_date=").concat(this.filterData.sort_date, "&sort_status=").concat(this.filterData.sort_status);
         }
+
+        var vm = this;
+        var newArr = [];
+        pagination.links.forEach(function (item) {
+          newArr.push("".concat(item, "&sort_date=").concat(vm.filterData.sort_date, "&sort_status=").concat(vm.filterData.sort_status));
+        });
+        pagination.links = newArr;
       }
 
       this.pagination = pagination;
@@ -2107,6 +2123,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
 //
 //
 //
@@ -20807,72 +20825,97 @@ var render = function() {
                     "nav",
                     { attrs: { "aria-label": "Page navigation example" } },
                     [
-                      _c("ul", { staticClass: "pagination" }, [
-                        _c(
-                          "li",
-                          {
-                            staticClass: "page-item",
-                            class: [{ disabled: !_vm.pagination.prev_page_url }]
-                          },
-                          [
-                            _c(
-                              "a",
-                              {
-                                staticClass: "page-link",
-                                attrs: { href: "#" },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.fetchBookings(
-                                      _vm.pagination.prev_page_url
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v("<")]
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c("li", { staticClass: "page-item disabled" }, [
+                      _c(
+                        "ul",
+                        { staticClass: "pagination" },
+                        [
                           _c(
-                            "a",
-                            { staticClass: "page-link", attrs: { href: "#" } },
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: [
+                                { disabled: !_vm.pagination.prev_page_url }
+                              ]
+                            },
                             [
-                              _vm._v(
-                                "Страница " +
-                                  _vm._s(_vm.pagination.current_page) +
-                                  " of " +
-                                  _vm._s(_vm.pagination.last_page)
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.fetchBookings(
+                                        _vm.pagination.prev_page_url
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("<")]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _vm._l(_vm.pagination.links, function(link, index) {
+                            return _c(
+                              "li",
+                              {
+                                key: index,
+                                staticClass: "page-item",
+                                class: [
+                                  {
+                                    disabled:
+                                      _vm.pagination.current_page == index + 1
+                                  }
+                                ]
+                              },
+                              [
+                                _c(
+                                  "a",
+                                  {
+                                    staticClass: "page-link",
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.fetchBookings(link)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(index + 1))]
+                                )
+                              ]
+                            )
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: [
+                                { disabled: !_vm.pagination.next_page_url }
+                              ]
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.fetchBookings(
+                                        _vm.pagination.next_page_url
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v(">")]
                               )
                             ]
                           )
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "li",
-                          {
-                            staticClass: "page-item",
-                            class: [{ disabled: !_vm.pagination.next_page_url }]
-                          },
-                          [
-                            _c(
-                              "a",
-                              {
-                                staticClass: "page-link",
-                                attrs: { href: "#" },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.fetchBookings(
-                                      _vm.pagination.next_page_url
-                                    )
-                                  }
-                                }
-                              },
-                              [_vm._v(">")]
-                            )
-                          ]
-                        )
-                      ])
+                        ],
+                        2
+                      )
                     ]
                   ),
                   _vm._v(" "),
@@ -21317,68 +21360,91 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
-              _c("ul", { staticClass: "pagination" }, [
-                _c(
-                  "li",
-                  {
-                    staticClass: "page-item",
-                    class: [{ disabled: !_vm.pagination.prev_page_url }]
-                  },
-                  [
-                    _c(
-                      "a",
-                      {
-                        staticClass: "page-link",
-                        attrs: { href: "#" },
-                        on: {
-                          click: function($event) {
-                            return _vm.fetchParkingPlaces(
-                              _vm.pagination.prev_page_url
-                            )
+              _c(
+                "ul",
+                { staticClass: "pagination" },
+                [
+                  _c(
+                    "li",
+                    {
+                      staticClass: "page-item",
+                      class: [{ disabled: !_vm.pagination.prev_page_url }]
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "page-link",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              return _vm.fetchParkingPlaces(
+                                _vm.pagination.prev_page_url
+                              )
+                            }
                           }
-                        }
-                      },
-                      [_vm._v("<")]
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c("li", { staticClass: "page-item disabled" }, [
-                  _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
-                    _vm._v(
-                      "Страница " +
-                        _vm._s(_vm.pagination.current_page) +
-                        " of " +
-                        _vm._s(_vm.pagination.last_page)
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    staticClass: "page-item",
-                    class: [{ disabled: !_vm.pagination.next_page_url }]
-                  },
-                  [
-                    _c(
-                      "a",
+                        },
+                        [_vm._v("<")]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm._l(_vm.pagination.last_page, function(i) {
+                    return _c(
+                      "li",
                       {
-                        staticClass: "page-link",
-                        attrs: { href: "#" },
-                        on: {
-                          click: function($event) {
-                            return _vm.fetchParkingPlaces(
-                              _vm.pagination.next_page_url
-                            )
-                          }
-                        }
+                        key: i,
+                        staticClass: "page-item",
+                        class: [{ disabled: _vm.pagination.current_page == i }]
                       },
-                      [_vm._v(">")]
+                      [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "page-link",
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                return _vm.fetchParkingPlaces(
+                                  "https://parking/parking-places/get-parking-places?page=" +
+                                    i
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(_vm._s(i))]
+                        )
+                      ]
                     )
-                  ]
-                )
-              ])
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "li",
+                    {
+                      staticClass: "page-item",
+                      class: [{ disabled: !_vm.pagination.next_page_url }]
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "page-link",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              return _vm.fetchParkingPlaces(
+                                _vm.pagination.next_page_url
+                              )
+                            }
+                          }
+                        },
+                        [_vm._v(">")]
+                      )
+                    ]
+                  )
+                ],
+                2
+              )
             ]),
             _vm._v(" "),
             _c("table", { staticClass: "table table-striped" }, [
