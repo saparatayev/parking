@@ -2474,13 +2474,7 @@ __webpack_require__.r(__webpack_exports__);
       var commit = _ref.commit;
       commit('loadingvuex', true);
       return new Promise(function (resolve, reject) {
-        fetch(page_url, {
-          method: 'get',
-          headers: {
-            'Access-Control-Allow-Headers': 'X-CSRF-Token',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-          }
-        }).then(function (res) {
+        fetch(page_url).then(function (res) {
           return res.json();
         }).then(function (res) {
           commit('setParkingPlaces', res);
