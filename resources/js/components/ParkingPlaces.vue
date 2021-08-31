@@ -30,7 +30,7 @@
                     <a @click="fetchParkingPlaces(pagination.prev_page_url)" class="page-link" href="#">&lt;</a>
                 </li>
                 <li v-for="i in pagination.last_page" :key="i" class="page-item" :class="[{disabled: pagination.current_page == i}]">
-                    <a @click="fetchParkingPlaces('https://parking/parking-places/get-parking-places?page=' + i)" href="#" class="page-link">{{ i }}</a>
+                    <a @click="fetchParkingPlaces('/parking-places/get-parking-places?page=' + i)" href="#" class="page-link">{{ i }}</a>
                 </li>
                 <li :class="[{disabled: !pagination.next_page_url}]" class="page-item">
                     <a @click="fetchParkingPlaces(pagination.next_page_url)" class="page-link" href="#">&gt;</a>

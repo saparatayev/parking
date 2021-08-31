@@ -21406,8 +21406,7 @@ var render = function() {
                             on: {
                               click: function($event) {
                                 return _vm.fetchParkingPlaces(
-                                  "https://parking/parking-places/get-parking-places?page=" +
-                                    i
+                                  "/parking-places/get-parking-places?page=" + i
                                 )
                               }
                             }

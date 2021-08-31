@@ -70,8 +70,10 @@ class ParkingplacesController extends Controller
     public function delete($id) {
         $place = ParkingPlace::with('bookings')->findOrFail($id);
 
-        if(!$place->bookings()->delete()) {
-            return response()->json(["message"=>"Internal Server Error"],500);
+        if(count($place->bookings) > 0) {
+            if(!$place->bookings()->delete()) {
+                return response()->json(["message"=>"Internal Server Error"],500);
+            }
         }
 
         if($place->delete()) {
