@@ -2026,7 +2026,7 @@ __webpack_require__.r(__webpack_exports__);
       };
 
       for (var i = 1; i <= lst_pg; i++) {
-        var url = 'https://parking/bookings/get-bookings?page=' + i;
+        var url = '/bookings/get-bookings?page=' + i;
         url = !this.customerId ? url : url + '&customer_id=' + this.customerId;
         pagination.links.push(url);
       }

@@ -184,7 +184,7 @@ export default {
             }
 
             for(let i = 1; i <= lst_pg; i++) {
-                let url = 'https://parking/bookings/get-bookings?page=' + i;
+                let url = '/bookings/get-bookings?page=' + i;
                 url = !this.customerId ? url : url + '&customer_id=' + this.customerId
                 pagination.links.push(url)
             }
