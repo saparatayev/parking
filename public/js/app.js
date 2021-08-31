@@ -2477,6 +2477,7 @@ __webpack_require__.r(__webpack_exports__);
         fetch(page_url, {
           method: 'get',
           headers: {
+            'Access-Control-Allow-Headers': '*',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
           }
         }).then(function (res) {
