@@ -20,7 +20,7 @@ export default {
                 fetch(page_url,{
                     method:'get',
                     headers: {
-                        'Access-Control-Allow-Headers': '*',
+                        'Access-Control-Allow-Headers': 'X-CSRF-Token',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                 })
