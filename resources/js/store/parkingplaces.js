@@ -17,7 +17,12 @@ export default {
             commit('loadingvuex', true)
 
             return new Promise((resolve, reject) => {
-                fetch(page_url)
+                fetch(page_url,{
+                    method:'get',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
                 .then(res => res.json())
                 .then(res => {
                     
